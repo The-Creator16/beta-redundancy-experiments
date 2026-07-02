@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redundancy-exp"
+version = "1.0.0"
+description = "Finite-window redundancy, canonicalization, and local-robustness benchmarks for beta-expansions."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Adilbek Taizhanov", email = "adilbek300108@gmail.com" },
+  { name = "Miras Seilkhan", email = "seilkhan.miras6117@gmail.com" },
+]
+keywords = [
+  "numeration-systems",
+  "beta-expansions",
+  "golden-ratio",
+  "canonicalization",
+  "fault-detection",
+  "structural-robustness",
+]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+# Figure generation (plot_experiment_*.py).
+plot = ["matplotlib>=3.7"]
+# Test suite.
+test = ["pytest>=7.0"]
+# Everything needed to reproduce the paper end to end.
+all = ["matplotlib>=3.7", "pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

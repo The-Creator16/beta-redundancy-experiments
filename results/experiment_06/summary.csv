@@ -1,0 +1,16 @@
+system,W,trials,injections_made,structural_detectability_rate,semantic_survival_rate,mean_abs_error
+phi,8,10000,8377,1.0,1.0,0.0
+tribonacci,8,10000,4031,1.0,1.0,0.0
+tetranacci,8,10000,1496,1.0,1.0,0.0
+phi,12,10000,9648,1.0,1.0,0.0
+tribonacci,12,10000,6401,1.0,1.0,0.0
+tetranacci,12,10000,2996,1.0,1.0,0.0
+phi,16,10000,9929,1.0,1.0,0.0
+tribonacci,16,10000,7807,1.0,1.0,0.0
+tetranacci,16,10000,4093,1.0,1.0,0.0
+phi,20,10000,9986,1.0,1.0,0.0
+tribonacci,20,10000,8676,1.0,1.0,0.0
+tetranacci,20,10000,5180,1.0,1.0,0.0
+phi,24,10000,10000,1.0,1.0,0.0
+tribonacci,24,10000,9272,1.0,1.0,0.0
+tetranacci,24,10000,5919,1.0,1.0,0.0

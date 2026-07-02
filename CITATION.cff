@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite both the software and the paper below."
+title: "Intrinsic Redundancy and Local Robustness in Finite beta-Expansion Systems (experiment code)"
+type: software
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/USERNAME/REPOSITORY"
+authors:
+  - family-names: Taizhanov
+    given-names: Adilbek
+    email: adilbek300108@gmail.com
+  - family-names: Seilkhan
+    given-names: Miras
+    email: seilkhan.miras6117@gmail.com
+keywords:
+  - numeration systems
+  - beta-expansions
+  - golden ratio base
+  - canonicalization
+  - fault detection
+  - structural robustness
+preferred-citation:
+  type: article
+  title: "Intrinsic Redundancy and Local Robustness in Finite beta-Expansion Systems"
+  authors:
+    - family-names: Taizhanov
+      given-names: Adilbek
+    - family-names: Seilkhan
+      given-names: Miras
+  year: 2026
+  # Update the DOI once the Zenodo archive is minted.
+  doi: "10.5281/zenodo.XXXXXXX"
