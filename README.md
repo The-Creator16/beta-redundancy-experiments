@@ -313,7 +313,7 @@ arithmetic canonicalizer, and the corruption/burst models.
 If you use this code, data, or figures, please cite the paper and the software
 archive. See [`CITATION.cff`](CITATION.cff). The archived release carries a
 permanent DOI (`10.5281/zenodo.XXXXXXX` — update once minted), and the code is
-maintained at `https://github.com/USERNAME/REPOSITORY`.
+maintained at `https://github.com/The-Creator16/beta-redundancy-experiments`.
 
 ---
 

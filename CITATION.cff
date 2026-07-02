@@ -4,7 +4,7 @@ title: "Intrinsic Redundancy and Local Robustness in Finite beta-Expansion Syste
 type: software
 version: "1.0.0"
 license: MIT
-repository-code: "https://github.com/USERNAME/REPOSITORY"
+repository-code: "https://github.com/The-Creator16/beta-redundancy-experiments"
 authors:
   - family-names: Taizhanov
     given-names: Adilbek
@@ -28,5 +28,4 @@ preferred-citation:
     - family-names: Seilkhan
       given-names: Miras
   year: 2026
-  # Update the DOI once the Zenodo archive is minted.
   doi: "10.5281/zenodo.XXXXXXX"
