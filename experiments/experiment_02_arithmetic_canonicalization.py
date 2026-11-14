@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "results" / "experiment_02",
+        default=PROJECT_ROOT / "results" / "data" / "experiment_02",
         help="Directory where outputs will be written.",
     )
     return parser.parse_args()

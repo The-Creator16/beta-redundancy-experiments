@@ -1,0 +1,14 @@
+{
+  "results/data/experiment_07/summary.csv": "8b698c553c9ed8ca93ec3c09fbd76eecec3a4eab84f967ebf3928e7f5d3fd3e2",
+  "results/data/experiment_02/cascade_histogram.csv": "a10b66013f035f120e266435d9605c645f5dbaeb1f8354317ac5ab5dde5e9c51",
+  "results/data/experiment_02/summary.csv": "ed45ff4d1cc542747c03f78f1246c3a58d6ceb024bfd4fed6cfd4e541ea59b09",
+  "results/data/experiment_04/summary.csv": "ad15d10209314a1bae3fde5694a015a941ab21505956754a59106b3e295bb74c",
+  "results/data/experiment_04/burst_width_summary.csv": "6da351112cdec8185045d777fc9ed36fdb51da3d20dd7a08c7a5b9131b8cb2b3",
+  "results/data/experiment_05/single_digit_summary.csv": "c5d3d06da22b64ee4b68bae93de651ebe69853aff8ac178c3c11c14a803e0f11",
+  "results/data/experiment_05/summary.csv": "60d2540ad9240b533bb4470691389b57516581ea8d1f8280a09d1be47b6cca03",
+  "results/data/experiment_05/burst_by_width.csv": "3a7a6dae4ec55d416ac0b1204afb26b5bb497afd14633bf782447f41387e75e8",
+  "results/data/experiment_06/summary.csv": "37b4a141b042d25fc459d1c473acb56ac3209a92f393b78216936abd9244856c",
+  "results/data/experiment_01/summary.csv": "73d297455d8e2fcc53ddc634fef4ca17904f2457ceb78804f31d0c535d0ef73f",
+  "results/data/experiment_03/position_summary.csv": "6fd0cbc5b27c9f72b750ff13b4ae2b678ffca8c2ee6827e7107e396afc297615",
+  "results/data/experiment_03/summary.csv": "196ee5851906471055ae83c64cd9ebd87b6a0c7ac0eda25da94458fff1bc617c"
+}

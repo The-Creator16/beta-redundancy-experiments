@@ -97,7 +97,7 @@ def main() -> None:
     parser.add_argument("--widths", type=int, nargs="+", default=[8, 12, 16, 20, 24])
     parser.add_argument("--trials", type=int, default=10000)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "results" / "experiment_06")
+    parser.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "results" / "data" / "experiment_06")
     args = parser.parse_args()
 
     systems = make_default_systems()

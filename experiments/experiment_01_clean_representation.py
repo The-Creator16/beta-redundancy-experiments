@@ -81,7 +81,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "results" / "experiment_01",
+        default=PROJECT_ROOT / "results" / "data" / "experiment_01",
         help="Directory where CSV outputs will be written.",
     )
     return parser.parse_args()

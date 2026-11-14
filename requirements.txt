@@ -1,19 +1,6 @@
-# Runtime dependencies for the beta-expansion redundancy experiments.
-#
-# The experiment engine (running the benchmarks and producing the CSV/Markdown
-# tables) needs only numpy and pandas. matplotlib is required only for the
-# plot_experiment_*.py figure scripts. pytest is required only to run the
-# test suite.
-#
-# The lower bounds below are the minimum versions the code is written against.
-# The exact versions the committed results and figures were produced with are
-# pinned in requirements-lock.txt for byte-for-byte reproduction.
-
+# Runtime and plotting dependencies. LaTeX must be installed separately.
+# Exact plotting versions used for this release: requirements-export-lock.txt.
 numpy>=1.24
 pandas>=2.0
-
-# Plotting (paper figures)
 matplotlib>=3.7
-
-# Testing
 pytest>=7.0

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
+from journal_style import configure, finish
 import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
@@ -18,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 # Figure settings
 # =============================================================================
 
-PANEL_FIGSIZE = (4.8, 4.8)
+PANEL_FIGSIZE = (3.35, 2.15)
 LEGEND_FIGSIZE = (7.2, 0.72)
 PNG_DPI = 240
 
@@ -65,13 +66,13 @@ SYSTEM_STYLES = {
     "tribonacci": {
         "label": r"$T_3$",
         "short": r"$T_3$",
-        "color": "#E69F00",
+        "color": "#D08C00",
         "marker": "^",
     },
     "tetranacci": {
         "label": r"$T_4$",
         "short": r"$T_4$",
-        "color": "#CC79A7",
+        "color": "#A85C92",
         "marker": "v",
     },
 }
@@ -92,40 +93,7 @@ SYSTEM_ORDER = [
 def configure_matplotlib_style() -> None:
     """Configure a clean, paper-friendly Matplotlib style."""
 
-    plt.rcParams.update(
-        {
-            "font.family": "sans-serif",
-            "font.sans-serif": ["DejaVu Sans", "Arial", "Liberation Sans"],
-            "mathtext.fontset": "dejavusans",
-
-            "font.size": 8.2,
-            "axes.titlesize": 9.2,
-            "axes.titleweight": "normal",
-            "axes.labelsize": 8.8,
-            "xtick.labelsize": 8.0,
-            "ytick.labelsize": 8.0,
-            "legend.fontsize": 8.3,
-
-            "axes.linewidth": 0.75,
-            "axes.edgecolor": "#333333",
-            "axes.labelcolor": "#111111",
-            "xtick.color": "#222222",
-            "ytick.color": "#222222",
-
-            "grid.color": "#dddddd",
-            "grid.linestyle": "-",
-            "grid.linewidth": 0.45,
-            "grid.alpha": 0.60,
-
-            "figure.facecolor": "white",
-            "axes.facecolor": "white",
-            "savefig.facecolor": "white",
-
-            # Keep text editable in vector outputs.
-            "pdf.fonttype": 42,
-            "ps.fonttype": 42,
-        }
-    )
+    configure()
 
 
 # =============================================================================
@@ -216,7 +184,7 @@ def create_square_panel() -> tuple[plt.Figure, plt.Axes]:
     """Create a square panel figure with one axis."""
 
     fig, ax = plt.subplots(figsize=PANEL_FIGSIZE, constrained_layout=True)
-    ax.set_box_aspect(1)
+    ax.set_box_aspect(None)
 
     return fig, ax
 
@@ -233,6 +201,7 @@ def style_axis(ax: plt.Axes, *, grid_axis: str = "both") -> None:
 def save_panel_figure(fig: plt.Figure, output_dir: Path, output_stem: str) -> None:
     """Save a square panel figure as PNG and PDF."""
 
+    finish(fig)
     png_path = output_dir / f"{output_stem}.png"
     pdf_path = output_dir / f"{output_stem}.pdf"
 
@@ -252,6 +221,7 @@ def save_legend_figure(
 ) -> None:
     """Save the separate legend strip with a tight bounding box."""
 
+    finish(fig)
     png_path = output_dir / f"{output_stem}.png"
     pdf_path = output_dir / f"{output_stem}.pdf"
 
@@ -391,7 +361,7 @@ def build_legend_handles() -> tuple[list[Line2D], list[str]]:
             [0],
             color=style["color"],
             marker=style["marker"],
-            linestyle="-",
+            linestyle=__import__("journal_style").LINESTYLES[style["color"].lower()],
             linewidth=1.95,
             markersize=5.2,
             markeredgecolor="white",
@@ -469,13 +439,13 @@ def main() -> None:
     parser.add_argument(
         "--summary-csv",
         type=Path,
-        default=PROJECT_ROOT / "results" / "experiment_07" / "summary.csv",
+        default=PROJECT_ROOT / "results" / "data" / "experiment_07" / "summary.csv",
         help="Path to Experiment 7 summary.csv.",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "results" / "experiment_07" / "paper_figures",
+        default=PROJECT_ROOT / "results" / "all" / "figures" / "complete" / "experiment_07",
         help="Directory where paper figures will be saved.",
     )
     parser.add_argument(

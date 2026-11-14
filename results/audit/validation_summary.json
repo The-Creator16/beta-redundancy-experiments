@@ -1,0 +1,8 @@
+{
+  "signed_naf_all_seven_widths_integer_counts": true,
+  "burst_decomposition_all_25_configurations": true,
+  "targeted_all_15_configurations_exact_word_recovery": true,
+  "guard_all_30_W16_configurations": true,
+  "guard_tolerance_false_positive": 0,
+  "guard_tolerance_false_negative": 0
+}

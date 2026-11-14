@@ -8,10 +8,10 @@ repository-code: "https://github.com/The-Creator16/beta-redundancy-experiments"
 authors:
   - family-names: Taizhanov
     given-names: Adilbek
-    email: adilbek300108@gmail.com
+    email: ataizhanov@constructor.university
   - family-names: Seilkhan
     given-names: Miras
-    email: seilkhan.miras6117@gmail.com
+    email: miras.seilkhan@campus.tu-berlin.de
 keywords:
   - numeration systems
   - beta-expansions
@@ -28,4 +28,4 @@ preferred-citation:
     - family-names: Seilkhan
       given-names: Miras
   year: 2026
-  doi: "10.5281/zenodo.XXXXXXX"
+  doi: "10.5281/zenodo.21140212"

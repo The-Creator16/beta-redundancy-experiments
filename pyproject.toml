@@ -10,8 +10,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [
-  { name = "Adilbek Taizhanov", email = "adilbek300108@gmail.com" },
-  { name = "Miras Seilkhan", email = "seilkhan.miras6117@gmail.com" },
+  { name = "Adilbek Taizhanov", email = "ataizhanov@constructor.university" },
+  { name = "Miras Seilkhan", email = "miras.seilkhan@campus.tu-berlin.de" },
 ]
 keywords = [
   "numeration-systems",

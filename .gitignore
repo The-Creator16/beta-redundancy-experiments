@@ -44,3 +44,10 @@ htmlcov/
 results/*_smoke/
 results/**/scratch/
 /tmp_results/
+
+# Generated outputs
+results/all/
+results/journal/
+results/supplementary/
+results/smoke/
+results/.build-*/

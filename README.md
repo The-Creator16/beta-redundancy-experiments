@@ -1,322 +1,487 @@
 # Intrinsic Redundancy and Local Robustness in Finite β-Expansion Systems
 
-Reproducible experiment code, data, and figures for the paper
-**“Intrinsic Redundancy and Local Robustness in Finite β-Expansion Systems”**
-by Adilbek Taizhanov and Miras Seilkhan.
+Reproducible experiment code, numerical data, figures and tables for **Intrinsic
+Redundancy and Local Robustness in Finite Beta-Expansion Systems**, by Adilbek
+Taizhanov and Miras Seilkhan.
 
-The study separates *ambient semantic redundancy* from *canonical codebook
-admissibility* in non-integer base (β-expansion) numeration systems, and
-measures — in a strict finite-window (bounded register) model — what that
-intrinsic redundancy actually provides for digital fault handling: structural
-fault **detection**, value-preserving **canonicalization**, and the narrow
-conditions under which a fault is **semantically survivable**.
+The study distinguishes ambient semantic redundancy from canonical codebook
+admissibility. It measures structural fault detection, value preservation after
+bounded repair, semantic survival, arithmetic canonicalization cost, and boundary
+loss in finite registers.
 
-Five representation systems are compared on equal-width registers:
+Five representation systems are compared at equal register width:
 
 | Key | System | Base | Alphabet | Canonical constraint |
-|-----|--------|------|----------|----------------------|
-| `binary`      | Standard binary            | 2                       | `{0,1}`    | none (every word admissible) |
-| `signed2_naf` | Signed-digit radix-2 (NAF) | 2                       | `{-1,0,1}` | Non-Adjacent Form |
-| `phi`         | Golden ratio (Φ)           | φ = (1+√5)/2            | `{0,1}`    | forbid `11` |
-| `tribonacci`  | Tribonacci (T₃)            | root of x³=x²+x+1       | `{0,1}`    | forbid `111` |
-| `tetranacci`  | Tetranacci (T₄)           | root of x⁴=x³+x²+x+1    | `{0,1}`    | forbid `1111` |
+| --- | --- | --- | --- | --- |
+| `binary` | Standard binary | 2 | {0,1} | Every binary word is admissible |
+| `signed2_naf` | Signed Non-Adjacent Form | 2 | {-1,0,1} | No adjacent nonzero digits |
+| `phi` | Golden-ratio system | φ=(1+√5)/2 | {0,1} | Forbid `11` |
+| `tribonacci` | Tribonacci | Positive root of x³=x²+x+1 | {0,1} | Forbid `111` |
+| `tetranacci` | Tetranacci | Positive root of x⁴=x³+x²+x+1 | {0,1} | Forbid `1111` |
 
----
-
-## Table of contents
+## Contents
 
 - [Repository layout](#repository-layout)
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [The seven experiments](#the-seven-experiments)
-- [Reproducing the paper](#reproducing-the-paper)
-- [Figures](#figures)
+- [Reproducing the numerical results](#reproducing-the-numerical-results)
+- [Figures and tables](#figures-and-tables)
 - [Package API](#package-api)
 - [Reproducibility notes](#reproducibility-notes)
-- [Testing](#testing)
-- [Citing](#citing)
-- [License](#license)
-
----
+- [Testing and audits](#testing-and-audits)
+- [Troubleshooting](#troubleshooting)
+- [Citation and license](#citation-and-license)
 
 ## Repository layout
 
-```
-.
-├── README.md               This file.
-├── FIGURES.md              Figure → paper-element mapping.
-├── LICENSE                 MIT.
-├── CITATION.cff            Machine-readable citation metadata.
-├── Makefile                make smoke / experiments / figures / all.
-├── reproduce.sh            Same pipeline without `make`.
-├── pyproject.toml          Package metadata + optional extras.
-├── requirements.txt        Loose runtime + plotting + test deps.
-├── requirements-lock.txt   Exact pinned toolchain for the committed outputs.
-│
-├── src/redundancy_exp/     The reusable engine (see "Package API").
-│   ├── window.py           Finite digit window I_{L,R}, overflow/truncation.
-│   ├── systems.py          The five representation systems + value maps.
-│   ├── sampling.py         Exact uniform sampling of constrained codebooks.
-│   ├── normalization.py    Local rewrite rules (011→100, etc.).
-│   ├── arithmetic.py       Digit-wise addition + bounded-window canonicalization.
-│   ├── corruption.py       Single-digit fault model.
-│   ├── burst.py            Local burst fault model.
-│   ├── algebraic.py        Kernel-aligned (value-preserving) burst injection.
-│   └── metrics.py          Benchmark drivers and metric aggregation.
-│
-├── experiments/
-│   ├── experiment_01_clean_representation.py        Exp 1 (Table 1, 8)
-│   ├── experiment_02_arithmetic_canonicalization.py Exp 2 (Table 2; Fig 6, 7)
-│   ├── experiment_03_single_digit_corruption.py     Exp 3 (Table 3; Fig 8, 9)
-│   ├── experiment_04_local_burst_corruption.py      Exp 4 (Table 4; Fig 10)
-│   ├── experiment_05_exhaustive.py                  Exp 5 (Table 5, 6)
-│   ├── experiment_06_algebraic_burst.py             Exp 6 (kernel survival)
-│   ├── experiment_07_guard_digits.py               Exp 7 (Table 7; Fig 11)
-│   └── plot_experiment_{01,02,03,04,07}.py         Figure generators.
-│
-├── tests/                  pytest suite for the engine.
-│
-└── results/                Committed outputs (CSV + Markdown + figures).
-    ├── experiment_01/ ... experiment_07/
-    │   ├── summary.csv           Canonical per-(system, W) metrics.
-    │   ├── summary.md            Human-readable table (where applicable).
-    │   └── paper_figures/        PNG + PDF figures (where applicable).
-    └── ...
-```
+| Path | Purpose |
+| --- | --- |
+| `README.md` | Installation, usage and experiment overview |
+| `FIGURES.md` | Publication figure numbers and data sources |
+| `REPRODUCIBILITY.md` | Protocols, table selections and audit scope |
+| `Makefile` | Export, simulation, test and audit commands |
+| `requirements.txt` | Python dependencies |
+| `requirements-export-lock.txt` | Python plotting versions used for the export environment |
+| `pyproject.toml` | Optional installable Python package and dependency groups |
+| `CITATION.cff` | Authors and citation metadata |
+| `LICENSE` | MIT license |
+| `src/redundancy_exp/` | Reusable scientific engine |
+| `experiments/experiment_*.py` | Seven numerical experiment runners |
+| `experiments/plot_experiment_*.py` | Complete benchmark plot collection |
+| `experiments/plot_journal.py` | Journal and supplementary numerical panels |
+| `experiments/build_release.py` | Select and assemble publication outputs |
+| `experiments/diagrams/` | Reproducible TikZ diagram sources |
+| `experiments/audit/` | Audit replay and aggregate-validation scripts |
+| `tests/` | Engine, table-selection and symbolic-identity checks |
+| `results/data/experiment_01/` … `experiment_07/` | Archived numerical CSV inputs |
+| `results/audit/` | Saved audit aggregates |
+| `results/input_sha256.json` | Archived experiment CSV checksums |
+| `results/journal/`, `results/supplementary/`, `results/all/` | Generated publication outputs |
 
-**Provenance.** The engine in `src/` and the experiment scripts are the
-computational source of truth. The figure scripts (`plot_experiment_*.py`) apply
-a single, consistent, colorblind-safe paper style (Okabe–Ito palette, one marker
-per system, editable-text PDF + high-DPI PNG, shared legend strips).
-
----
+The engine modules are `window.py` (finite registers), `systems.py` (bases and
+value maps), `sampling.py` (constrained-word sampling), `normalization.py`
+(rewrite rules), `arithmetic.py`, `corruption.py`, `burst.py`, `algebraic.py`,
+and `metrics.py`.
 
 ## Installation
 
-Requires **Python ≥ 3.10**.
+**Requirements:** Python **3.10+**; NumPy, pandas and Matplotlib; a working
+**pdfLaTeX** installation with **standalone, TikZ/PGF, amsmath and amssymb**.
+pytest is included for tests. Make is convenient on Linux/macOS but optional.
+LaTeX is a system dependency: `pip install` does not install it.
+
+Download and extract the repository, then open a terminal in its root directory
+(the directory containing `README.md` and `Makefile`). Choose the instructions
+for your operating system.
+
+### Linux: Ubuntu / Debian
+
+Install Python, Make and LaTeX:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate           # Windows: .venv\Scripts\activate
-
-# Everything (engine + plotting + tests):
-pip install -r requirements.txt
-
-# For byte-for-byte reproduction of the committed figures:
-# pip install -r requirements-lock.txt
+sudo apt update
+sudo apt install python3 python3-venv python3-pip make texlive-latex-extra texlive-pictures texlive-fonts-recommended
 ```
 
-The scripts add `src/` to `sys.path` automatically, so **no install step is
-required** — you can run them directly from the repository root. Installing the
-package (`pip install -e .`) is optional.
+Create the Python environment and install dependencies:
 
----
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+pdflatex --version
+make journal
+```
+
+The generated files are in `results/journal/`.
+
+### Linux: Fedora
+
+Install Python, Make and LaTeX:
+
+```bash
+sudo dnf install python3 python3-pip make texlive-latex texlive-standalone texlive-pgf texlive-amsmath texlive-amsfonts
+```
+
+Then:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+pdflatex --version
+make journal
+```
+
+### macOS
+
+With [Homebrew](https://brew.sh/) installed:
+
+```bash
+brew install python
+brew install --cask mactex-no-gui
+```
+
+MacTeX is a full TeX distribution and includes the required diagram packages.
+After installation, reopen Terminal or add its executable directory to the
+current session:
+
+```bash
+export PATH="/Library/TeX/texbin:$PATH"
+```
+
+In the repository root:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+pdflatex --version
+python experiments/build_release.py journal
+```
+
+If Make is available, `make journal` is equivalent to the final command.
+Alternatively, install MacTeX using the installer from [tug.org/mactex](https://tug.org/mactex/).
+
+### Windows: PowerShell
+
+Install Python 3.10+ from [python.org](https://www.python.org/downloads/windows/)
+with the Python launcher enabled. Install [MiKTeX](https://miktex.org/download)
+or use WinGet:
+
+```powershell
+winget install --id MiKTeX.MiKTeX --exact
+```
+
+Complete MiKTeX setup, open MiKTeX Console and check for updates. Install the
+`standalone`, `pgf`, `amsmath` and `amsfonts` packages from its Packages page.
+The same packages can be installed from the command line after setup:
+
+```powershell
+mpm --install=standalone
+mpm --install=pgf
+mpm --install=amsmath
+mpm --install=amsfonts
+```
+
+Use the user or administrator mode that matches the installation. Close and
+reopen PowerShell after installing Python/MiKTeX so their commands are on PATH.
+
+In the repository root, the following commands work without activation or Make:
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+pdflatex --version
+.\.venv\Scripts\python.exe experiments/build_release.py journal
+```
+
+For supplementary or all outputs:
+
+```powershell
+.\.venv\Scripts\python.exe experiments/build_release.py supplementary
+.\.venv\Scripts\python.exe experiments/build_release.py all
+```
+
+Using the virtual environment's executable directly avoids PowerShell activation
+policy issues. Run `py -3 --version` to confirm Python is at least 3.10.
+
+### Optional package installation
+
+The command-line runners add `src/` to their import path automatically. To use
+the engine from a Python shell or another project, install it in editable mode
+from the repository root:
+
+```bash
+python -m pip install -e .
+```
+
+To use the recorded plotting dependency versions, install
+`requirements-export-lock.txt` in a compatible environment. These versions do
+not guarantee identical PDF bytes: metadata and font/toolchain versions can vary.
 
 ## Quick start
 
-Verify the whole pipeline in under a minute (tiny trials, not the paper
-protocol):
+After installation, choose the output you need:
+
+| Command | Output | Contents |
+| --- | --- | --- |
+| `make journal` | `results/journal/` | Article Figures 1–4 and Tables 1–5 |
+| `make supplementary` | `results/supplementary/` | Figures S1–S9 and Tables S1–S9 |
+| `make all` | `results/all/` | Both publication sets and the complete benchmark plot collection |
+| `make smoke` | `results/smoke/` | Small runs of all seven experiment scripts |
+| `make test` | Terminal report | Unit and publication-selection tests |
+| `make audits` | Audit validation report | Normalized errors and saved aggregate checks |
+| `make clean` | Removes generated bundles and smoke outputs | Preserves archived CSVs and code |
+| `make` | Terminal help | Available targets |
+
+**`make all` regenerates figures and tables from saved data. It does not rerun
+simulations.** To generate new numerical results, use the experiment commands
+below.
+
+The three export commands also work without Make on every operating system:
 
 ```bash
-make smoke          # or:  ./reproduce.sh smoke
+python experiments/build_release.py journal
+python experiments/build_release.py supplementary
+python experiments/build_release.py all
 ```
 
-Run the test suite:
-
-```bash
-make test           # or:  python -m pytest tests/ -q
-```
-
-Regenerate every figure from the committed CSVs (fast, ~30s):
-
-```bash
-make figures
-```
-
----
+On Windows, replace `python` with `.\.venv\Scripts\python.exe` unless the
+virtual environment is activated. Each mode replaces only its own output
+directory after a successful build.
 
 ## The seven experiments
 
-Every experiment writes a canonical `summary.csv` (one row per `system × W`, or
-`× guard_digits`) plus, where relevant, auxiliary CSVs and a Markdown table.
-Fixed random seeds are baked into each script, so runs are reproducible.
+Numerical runners write their outputs under `results/data/experiment_XX/` by
+default. `summary.csv` contains one row per configuration; some experiments also
+produce position summaries, burst-width summaries or cost histograms.
 
-### Experiment 1 — Clean representation benchmark
-Static geometry of each codebook before any fault or arithmetic: codebook size,
-ambient size, sparsity, information capacity (bits/digit), normalized deficit,
-nonzero density, and clean round-trip exactness.
+The examples below write to `results/custom/` to keep publication inputs intact.
+They illustrate individual runner usage; full publication reproduction requires
+the default widths, seeds, trial counts and sweep ordering.
 
-```bash
-python experiments/experiment_01_clean_representation.py --trials 10000 --widths 8 12 16 20 24
-```
-→ `results/experiment_01/{summary.csv,summary.md}` · **paper: Table 1, Table 8.**
+### Experiment 1: clean representation
 
-### Experiment 2 — Arithmetic canonicalization benchmark
-*Not* a fault experiment. Two admissible words are added digit-wise, producing a
-raw state (with temporary digit `2`), which is canonicalized in the bounded
-window. Measures arithmetic exactness, canonicalization success, rewrite cost
-`κ`, propagation depth `π`, overflow/truncation, and cascade-length tails.
+Measures codebook and ambient cardinality, sparsity, information capacity,
+nonzero density and clean round-trip exactness.
 
 ```bash
-python experiments/experiment_02_arithmetic_canonicalization.py --trials 10000 --widths 8 12 16 20 24
+python experiments/experiment_01_clean_representation.py --trials 10000 --widths 8 12 16 20 24 --output-dir results/custom/experiment_01
 ```
-→ `results/experiment_02/{summary.csv,summary.md,cascade_histogram.csv,cascade_histogram.md}` · **paper: Table 2, Fig 6, Fig 7.**
 
-### Experiment 3 — Single-digit corruption benchmark
-One uniformly random digit is corrupted, then the bounded-window repair is
-applied. Measures structural detectability, structural exactness, semantic
-survival (theoretically 0 — the No-Free-Lunch result), error magnitude, repair
-cost, and position-wise detectability.
+Used by article Table 1 and supplementary Table S1.
+
+### Experiment 2: arithmetic canonicalization
+
+Adds two admissible operands digit by digit and canonicalizes the raw sum in the
+bounded workspace. Measures arithmetic exactness, native operation cost, cost
+tails and discarded writes at both boundaries.
 
 ```bash
-python experiments/experiment_03_single_digit_corruption.py --trials 10000 --widths 8 12 16 20 24
+python experiments/experiment_02_arithmetic_canonicalization.py --trials 10000 --widths 8 12 16 20 24 --output-dir results/custom/experiment_02
 ```
-→ `results/experiment_03/{summary.csv,summary.md,position_summary.csv,position_summary.md}` · **paper: Table 3, Fig 8, Fig 9.**
 
-### Experiment 4 — Local burst corruption benchmark
-A contiguous burst of width `b ∈ {2,3,4,5}` with a random nonzero mask is
-injected. Bursts can be semantically survivable when the error vector lands in
-the algebraic kernel of the base (e.g. `100 ↔ 011`).
+Used by article Figure 3 and Table 4, and supplementary Figure S3 and Table S2.
+
+### Experiment 3: single-digit corruption
+
+Changes one digit, then applies bounded repair. Measures detectability,
+structural exactness, semantic survival, residual error and repair activity.
+The position-conditioned profile retains the location of the selected digit.
 
 ```bash
-python experiments/experiment_04_local_burst_corruption.py --trials 10000 --widths 8 12 16 20 24 --burst-widths 2 3 4 5
+python experiments/experiment_03_single_digit_corruption.py --trials 10000 --widths 8 12 16 20 24 --output-dir results/custom/experiment_03
 ```
-→ `results/experiment_04/{summary.csv,summary.md,burst_width_summary.csv,burst_width_summary.md}` · **paper: Table 4, Fig 10.**
 
-### Experiment 5 — Exhaustive small-window verification
-No sampling: enumerates **every** admissible word and **every** valid
-single-digit and burst corruption for small even widths `W ≤ 16`. Confirms the
-Monte-Carlo results are not artifacts. Deterministic (no RNG).
+Used by article Figure 2a–b and Table 2, supplementary Figures S4–S5 and S9,
+and Table S3.
+
+### Experiment 4: local burst corruption
+
+Samples a burst width, exposed interval and nonzero substitution mask. Measures
+repair outcomes and propagation, including semantic survival from value-neutral
+perturbations or cancellation with boundary loss.
 
 ```bash
-python experiments/experiment_05_exhaustive.py --widths 4 6 8 10 12 14 16 --burst-widths 2 3 4 5
+python experiments/experiment_04_local_burst_corruption.py --trials 10000 --widths 8 12 16 20 24 --burst-widths 2 3 4 5 --output-dir results/custom/experiment_04
 ```
-→ `results/experiment_05/{summary.csv,single_digit_summary.csv,burst_by_width.csv}` · **paper: Table 5, Table 6.**
-*Long-running (tens of minutes at W = 16). Deterministic, so the committed CSVs are exact.*
 
-### Experiment 6 — Algebraic burst injection
-Replaces random noise with kernel-aligned substitutions (`100→011`, `1000→0111`,
-`10000→01111`). Interior injections give semantic survival = 1.000, directly
-confirming the Algebraic Kernel Criterion.
+Used by article Figure 2c–d and Tables 2–3, supplementary Figures S6–S7 and
+Table S4. Article Table 3 additionally uses the burst mechanism audit.
+
+### Experiment 5: exhaustive small-window enumeration
+
+Enumerates admissible words and injection choices, with no random sampling.
+Its normalization interface differs from the Monte Carlo repair routine:
+Signed NAF rejects inadmissible inputs, and multinacci repair stops at an upper
+carry. These results therefore do not directly validate the full Monte Carlo
+repair interface. Full enumeration can be expensive.
 
 ```bash
-python experiments/experiment_06_algebraic_burst.py --trials 10000 --widths 8 12 16 20 24
+python experiments/experiment_05_exhaustive.py --widths 4 6 8 10 12 14 16 --burst-widths 2 3 4 5 --output-dir results/custom/experiment_05
 ```
-→ `results/experiment_06/summary.csv` · **paper: Experiment 6 (kernel survival).**
 
-### Experiment 7 — Guard-digit truncation analysis
-Adds `g ∈ {0,2,4,8,12,16}` least-significant guard digits and measures how
-lower-boundary truncation, arithmetic exactness, error, and cost respond
-(validating the guard-digit error bound, Lemma 2).
+Used by supplementary Tables S5–S6.
+
+### Experiment 6: targeted algebraic burst injection
+
+Injects value-neutral substitutions `100 → 011`, `1000 → 0111` and
+`10000 → 01111`. Only eligible sampled words receive an injection. Exact-value
+and original-word recovery checks are supplied by the targeted audit.
 
 ```bash
-python experiments/experiment_07_guard_digits.py --trials 10000 --widths 8 12 16 20 24 --guards 0 2 4 8 12 16
+python experiments/experiment_06_algebraic_burst.py --trials 10000 --widths 8 12 16 20 24 --output-dir results/custom/experiment_06
 ```
-→ `results/experiment_07/summary.csv` · **paper: Table 7, Fig 11.**
 
-All scripts accept `--help`, `--systems`, `--seed`, and `--output-dir`.
+Used by supplementary Table S7 together with `targeted_audit.csv`.
 
----
+### Experiment 7: guard-digit arithmetic
 
-## Reproducing the paper
-
-Full pipeline (all experiments with the paper protocol, then all figures):
+Adds least-significant guard digits, canonicalizes in the extended workspace,
+and projects back to the stored register. Measures workspace truncation,
+post-projection error, numerical equality and native operation cost.
 
 ```bash
-make all            # or:  ./reproduce.sh
+python experiments/experiment_07_guard_digits.py --trials 10000 --widths 8 12 16 20 24 --guards 0 2 4 8 12 16 --output-dir results/custom/experiment_07
 ```
 
-Individual stages:
+Used by article Figure 4 and Table 5, supplementary Figure S8 and Tables S8–S9.
+Audit tables use `guard_audit.csv` and `tail_scales.csv`. The tail scale is a
+reference quantity, not an established bound on accumulated cascade loss.
+
+Use `--help` on any runner for supported options. Options differ between scripts;
+for example, the exhaustive runner has no random seed.
+
+## Reproducing the numerical results
+
+To rerun all seven experiments with the publication protocol:
 
 ```bash
-make experiments    # all 7 data experiments
-make figures        # all figures from the committed CSVs
-make exp03 fig03    # just one experiment + its figures
+make experiments
 ```
 
-Expected single-core wall-clock: exp 1 ≈ 10 s, exp 2–4 ≈ 45–55 s each,
-exp 6 ≈ 20 s, exp 7 ≈ 5 min, exp 5 ≈ 30–60 min (exhaustive).
+This writes to **`results/data/`**, replacing the archived experiment CSVs.
+To write a separate numerical run instead:
 
----
+```bash
+make experiments RES=results/rerun
+```
 
-## Figures
+Individual Make targets are `exp01` through `exp07`. For example:
 
-Figure scripts read a committed `summary.csv` and write **both** `.png`
-(240 DPI) and `.pdf` (editable text) into `results/experiment_XX/paper_figures/`.
-Each experiment folder also gets a standalone legend strip for compact
-multi-panel layouts.
+```bash
+make exp03 RES=results/rerun
+```
 
-A complete mapping from every generated figure filename to its paper element —
-and which figures are **paper** figures versus **supplementary** extras — is in
-[**FIGURES.md**](FIGURES.md).
+On Windows without Make, use the seven Python commands in the experiment
+sections, retaining the complete default configuration.
 
----
+Publication exports use the archived data in `results/data/` and saved audit
+aggregates in `results/audit/`. They check `results/input_sha256.json` before
+combining them. A custom numerical run is not automatically substituted into
+publication tables. Compare the complete results and relevant audit replays
+before preparing a new numerical release; see [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+
+## Figures and tables
+
+Each publication bundle contains:
+
+| Path | Contents |
+| --- | --- |
+| `figures/` | Numbered vector PDF panels, symbolic diagrams and legends |
+| `tables/` | CSV, Markdown and LaTeX representations of each selected table |
+| `manifest.json` | SHA-256 hashes of input data, source files and generated outputs |
+
+For example, `results/journal/figures/figure_3a.pdf` is article Figure 3a.
+Supplementary outputs use `figure_S1.pdf` through `figure_S9.pdf`. Multi-panel
+figures remain separate resources for composition in LaTeX.
+
+The `all` bundle groups plots into `figures/journal/`,
+`figures/supplementary/`, `figures/complete/` and `figures/additional/`.
+The complete collection includes PNG and PDF exports with experiment-based
+names, including plots not selected for either publication.
+
+CSV tables retain numerical precision. Markdown and LaTeX apply display rounding,
+so a CSV mean of `11.5291` can appear as `11.53` in the readable table. LaTeX
+exports are `tabular` fragments to include inside a table environment.
+
+Numerical plots are regenerated from CSVs with Matplotlib. Symbolic diagrams
+are compiled from `.tex` sources with pdfLaTeX. Neither process reads manuscript
+PDFs or screenshots. Manuscript PDFs may be placed in the repository root as
+reference documents without affecting the build.
+
+See [FIGURES.md](FIGURES.md) for the full figure map and
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md) for table selections.
 
 ## Package API
 
-The engine lives under `src/redundancy_exp/`. Minimal public surface:
+After `python -m pip install -e .`, the reusable engine can be imported:
 
 ```python
+import numpy as np
 from redundancy_exp import DigitWindow, make_default_systems
 
-systems = make_default_systems()          # dict: name -> RepresentationSystem
-phi     = systems["phi"]
-window  = DigitWindow(L=12, R=11)         # register I_{L,R}, width W = 24
+systems = make_default_systems()
+phi = systems["phi"]
+window = DigitWindow(L=12, R=11)
+rng = np.random.default_rng(42)
 
-word    = phi.sample_admissible(window, rng)   # exact-uniform admissible word
-value   = phi.value_key(word, window)          # exact value in the base's ring
+word = phi.sample_word(window, rng)
+value = phi.value_key(word, window)
+assert phi.is_admissible(word)
+assert phi.normalize(word, window).digits == word
 ```
 
-Fault, arithmetic, and metric helpers live in `corruption.py`, `burst.py`,
-`algebraic.py`, `arithmetic.py`, `normalization.py`, and `metrics.py`. The
-experiment scripts are thin drivers over these modules; read any
-`experiment_0*.py` for a worked example.
-
----
+Fault, arithmetic and metric helpers live in `corruption.py`, `burst.py`,
+`algebraic.py`, `arithmetic.py`, `normalization.py` and `metrics.py`.
+The experiment runners provide complete examples of their use.
 
 ## Reproducibility notes
 
-- **Determinism.** All Monte-Carlo experiments use `numpy.random.default_rng`
-  seeded from `--seed` (defaults baked in: 20260620–20260623 for exp 1–4,
-  `42` for exp 6, `100` for exp 7). Re-running with defaults reproduces the
-  committed CSVs exactly. Experiment 5 is exhaustive and has no RNG.
+- **Random streams:** Experiments 1–4 use seeds 20260620–20260623; Experiments
+  6 and 7 use 42 and 100. A script advances its stream across the whole sweep.
+- **Guard comparisons:** Experiment 7 must consume preceding widths to reproduce
+  a later slice. Different guard counts use fresh operands, not paired samples.
+- **Boundary policy:** Overflow and truncation record discarded writes above
+  and below the workspace. Both flags can occur in the same trial.
+- **Cost interpretation:** Native operation counts differ by system and do not
+  represent equal execution times or measured circuit latency.
+- **Audit scope:** Exact-value replays and saved aggregate validation have
+  different scopes. Passing aggregate checks does not rerun every trial.
+- **Exact versus floating residuals:** Article Table 5 uses exact workspace
+  zeros at g=16; supplementary Table S9 retains floating evaluation residuals.
+- **Environment:** `requirements-export-lock.txt` records plotting dependency
+  versions. Matching versions helps comparison but does not guarantee identical
+  PDF metadata, font output or CSV serialization across environments.
 
-- **Experiment 7 uses one RNG stream across all widths.** Run it as a single
-  process over the full width sweep (as `make exp07` / `reproduce.sh` do) to
-  reproduce Table 7 exactly. Running widths in separate processes re-seeds each
-  one and yields a different (equally valid) realization.
+## Testing and audits
 
-- **Filename convention.** Every experiment writes `summary.csv`; every figure
-  script reads `summary.csv`. (Earlier drafts had inconsistent `summary5.csv` /
-  `summary7.csv` names — these have been standardized.)
-
-- **Boundary accounting.** Writes past the most-significant edge are counted as
-  *overflow*; writes past the least-significant edge as *truncation*. Both are
-  discarded, so arithmetic exactness can legitimately fail even when the final
-  in-window word is admissible.
-
----
-
-## Testing
+Run the tests:
 
 ```bash
 python -m pytest tests/ -q
 ```
 
-The suite covers the window model, value maps, sampling, normalization, the
-arithmetic canonicalizer, and the corruption/burst models.
+Validate saved audit aggregates and recompute normalized errors:
 
----
+```bash
+python experiments/audit/normalized_errors.py --repo .
+python experiments/audit/validate_audits.py --repo .
+```
 
-## Citing
+With Make, these commands are `make test` and `make audits`. `make smoke`
+checks all numerical runners on small configurations; it does not require LaTeX
+and does not replace the publication data.
 
-If you use this code, data, or figures, please cite the paper and the software
-archive. See [`CITATION.cff`](CITATION.cff). The archived release carries a
-permanent DOI (`10.5281/zenodo.XXXXXXX` — update once minted), and the code is
-maintained at `https://github.com/The-Creator16/beta-redundancy-experiments`.
+Tests cover the scientific engine, publication table selections, selected
+published values and exact symbolic identities. Full Monte Carlo and exhaustive
+replays are separate computations. Replay commands and limitations are described
+in [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
 
----
+## Troubleshooting
 
-## License
+| Message | Action |
+| --- | --- |
+| `pdflatex is required` | Install the OS-specific LaTeX distribution above; confirm `pdflatex --version` works in the same terminal |
+| `LaTeX package missing: standalone.cls` | Install `standalone` using the TeX distribution package manager |
+| `LaTeX package missing: tikz.sty` | Install PGF/TikZ (`texlive-pgf` on Fedora, `texlive-pictures` on Ubuntu, `pgf` in MiKTeX) |
+| macOS cannot find an installed MacTeX | Run `export PATH="/Library/TeX/texbin:$PATH"` and retry |
+| `ModuleNotFoundError` for NumPy/pandas/Matplotlib | Install `requirements.txt` using the same Python executable used to run the script |
+| `make` is unavailable | Use `python experiments/build_release.py <mode>`; on Windows use the virtual environment executable |
+| `Archived input changed` | Compare the data with the archived ensemble and audit records; do not bypass the checksum guard for a custom run |
 
-MIT — see [`LICENSE`](LICENSE).
+Dependencies are checked before publication rendering. A failed export leaves
+the previous completed output bundle intact. Do not run two builds of the same
+mode simultaneously.
+
+## Citation and license
+
+If using this code or numerical results, cite the research and software archive
+identified in [CITATION.cff](CITATION.cff). The DOI
+[10.5281/zenodo.21140212](https://doi.org/10.5281/zenodo.21140212) identifies the
+original archived research release; it does not by itself identify a later
+journal software release.
+
+The code is distributed under the **MIT License** — see [LICENSE](LICENSE).

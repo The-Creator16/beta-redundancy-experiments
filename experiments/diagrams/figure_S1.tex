@@ -1,0 +1,183 @@
+\documentclass[border=3pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,backgrounds,fit}
+\begin{document}
+\begingroup%
+\definecolor{PhiNodeFill}{RGB}{250,250,248}%
+\definecolor{PhiNodeDraw}{RGB}{90,90,90}%
+\definecolor{PhiCollisionFill}{RGB}{236,244,252}%
+\definecolor{PhiCollisionDraw}{RGB}{42,82,130}%
+\definecolor{PhiFlowZero}{RGB}{180,180,180}%
+\definecolor{PhiFlowOne}{RGB}{82,105,135}%
+\definecolor{PhiText}{RGB}{55,55,55}%
+\definecolor{PhiNoteFill}{RGB}{252,250,242}%
+\definecolor{PhiNoteDraw}{RGB}{145,125,75}%
+
+\def\PhiStateNode#1#2{%
+  \begin{tabular}{@{}c@{}}
+    $#1$\\[-1pt]
+    {\scriptsize \texttt{#2}}
+  \end{tabular}%
+}%
+
+\def\FlowZero#1#2#3{%
+  \draw[flowzero,line width=#1] (#2.east) -- node[pos=0.5, fill=white, text=PhiText, inner sep=1.5pt] {\tiny 0} (#3.west);
+}%
+\def\FlowOne#1#2#3{%
+  \draw[flowone,line width=#1] (#2.east) -- node[pos=0.5, fill=white, text=PhiText, inner sep=1.5pt] {\tiny 1} (#3.west);
+}%
+
+\noindent\begin{tikzpicture}[
+    x=1cm,
+    y=0.9cm, 
+    font=\sffamily\footnotesize,
+    state/.style={
+        rectangle,
+        rounded corners=2.4pt,
+        draw=PhiNodeDraw,
+        fill=PhiNodeFill,
+        line width=0.45pt,
+        align=center,
+        minimum width=2.4cm,
+        minimum height=0.85cm,
+        inner xsep=4pt,
+        inner ysep=2.5pt,
+        text=PhiText
+    },
+    collision/.style={
+        state,
+        draw=PhiCollisionDraw,
+        fill=PhiCollisionFill,
+        line width=1.2pt
+    },
+    layerlabel/.style={
+        font=\sffamily\small\bfseries,
+        text=black,
+        align=center,
+        anchor=center
+    },
+    countlabel/.style={
+        font=\sffamily\scriptsize,
+        text=PhiText,
+        align=center,
+        anchor=center
+    },
+    flowzero/.style={
+        draw=PhiFlowZero,
+        opacity=0.6,
+        line cap=round
+    },
+    flowone/.style={
+        draw=PhiFlowOne,
+        opacity=0.8,
+        line cap=round
+    },
+    note/.style={
+        rectangle,
+        rounded corners=2pt,
+        draw=PhiNoteDraw,
+        fill=PhiNoteFill,
+        line width=0.45pt,
+        align=left,
+        inner xsep=5pt,
+        inner ysep=4pt,
+        text=PhiText
+    }
+]
+
+\useasboundingbox (-1.2, -10.5) rectangle (13.2, 9.4);
+
+\def\xA{0.0}
+\def\xB{3.0}
+\def\xC{6.0}
+\def\xD{9.0}
+\def\xE{12.0}
+
+\node[layerlabel] at (\xA, 8.8) {$n=0$};
+\node[countlabel] at (\xA, 8.1) {$1$ string\\$1$ state};
+
+\node[layerlabel] at (\xB, 8.8) {$n=1$};
+\node[countlabel] at (\xB, 8.1) {$2$ strings\\$2$ states};
+
+\node[layerlabel] at (\xC, 8.8) {$n=2$};
+\node[countlabel] at (\xC, 8.1) {$4$ strings\\$4$ states};
+
+\node[layerlabel] at (\xD, 8.8) {$n=3$};
+\node[countlabel] at (\xD, 8.1) {$8$ strings\\$7$ states};
+
+\node[layerlabel] at (\xE, 8.8) {$n=4$};
+\node[countlabel] at (\xE, 8.1) {$16$ strings\\$12$ states};
+
+\node[state] (L0_0) at (\xA, 0.00) {\PhiStateNode{0+0\varphi}{$\varepsilon$}};
+
+\node[state] (L1_1) at (\xB, 2.85) {\PhiStateNode{1+0\varphi}{1}};
+\node[state] (L1_0) at (\xB, -2.85) {\PhiStateNode{0+0\varphi}{0}};
+
+\node[state] (L2_3) at (\xC, 4.56) {\PhiStateNode{1+1\varphi}{11}};
+\node[state] (L2_2) at (\xC, 1.14) {\PhiStateNode{0+1\varphi}{10}};
+\node[state] (L2_1) at (\xC, -1.14) {\PhiStateNode{1+0\varphi}{01}};
+\node[state] (L2_0) at (\xC, -4.56) {\PhiStateNode{0+0\varphi}{00}};
+
+\node[state] (L3_6) at (\xD, 5.70) {\PhiStateNode{2+2\varphi}{111}};
+\node[state] (L3_5) at (\xD, 3.42) {\PhiStateNode{1+2\varphi}{110}};
+\node[state] (L3_4) at (\xD, 2.28) {\PhiStateNode{2+1\varphi}{101}};
+\node[collision] (L3_3) at (\xD, 0.00) {\PhiStateNode{1+1\varphi}{011, 100}};
+\node[state] (L3_2) at (\xD, -2.28) {\PhiStateNode{0+1\varphi}{010}};
+\node[state] (L3_1) at (\xD, -3.42) {\PhiStateNode{1+0\varphi}{001}};
+\node[state] (L3_0) at (\xD, -5.70) {\PhiStateNode{0+0\varphi}{000}};
+
+\node[state] (L4_11) at (\xE, 6.27) {\PhiStateNode{3+4\varphi}{1111}};
+\node[state] (L4_10) at (\xE, 5.13) {\PhiStateNode{2+4\varphi}{1110}};
+\node[state] (L4_9) at (\xE, 3.99) {\PhiStateNode{3+3\varphi}{1101}};
+\node[collision] (L4_8) at (\xE, 2.85) {\PhiStateNode{2+3\varphi}{1011, 1100}};
+\node[state] (L4_7) at (\xE, 1.71) {\PhiStateNode{1+3\varphi}{1010}};
+\node[collision] (L4_6) at (\xE, 0.57) {\PhiStateNode{2+2\varphi}{0111, 1001}};
+\node[collision] (L4_5) at (\xE, -0.57) {\PhiStateNode{1+2\varphi}{0110, 1000}};
+\node[state] (L4_4) at (\xE, -1.71) {\PhiStateNode{2+1\varphi}{0101}};
+\node[collision] (L4_3) at (\xE, -2.85) {\PhiStateNode{1+1\varphi}{0011, 0100}};
+\node[state] (L4_2) at (\xE, -3.99) {\PhiStateNode{0+1\varphi}{0010}};
+\node[state] (L4_1) at (\xE, -5.13) {\PhiStateNode{1+0\varphi}{0001}};
+\node[state] (L4_0) at (\xE, -6.27) {\PhiStateNode{0+0\varphi}{0000}};
+
+\begin{pgfonlayer}{background}
+\FlowZero{0.8pt}{L0_0}{L1_0} \FlowOne{0.8pt}{L0_0}{L1_1}
+\FlowZero{0.8pt}{L1_0}{L2_0} \FlowOne{0.8pt}{L1_0}{L2_1}
+\FlowZero{0.8pt}{L1_1}{L2_2} \FlowOne{0.8pt}{L1_1}{L2_3}
+\FlowZero{0.8pt}{L2_0}{L3_0} \FlowOne{0.8pt}{L2_0}{L3_1}
+\FlowZero{0.8pt}{L2_1}{L3_2} \FlowOne{0.8pt}{L2_1}{L3_3}
+\FlowZero{0.8pt}{L2_2}{L3_3} \FlowOne{0.8pt}{L2_2}{L3_4}
+\FlowZero{0.8pt}{L2_3}{L3_5} \FlowOne{0.8pt}{L2_3}{L3_6}
+\FlowZero{0.8pt}{L3_0}{L4_0} \FlowOne{0.8pt}{L3_0}{L4_1}
+\FlowZero{0.8pt}{L3_1}{L4_2} \FlowOne{0.8pt}{L3_1}{L4_3}
+\FlowZero{0.8pt}{L3_2}{L4_3} \FlowOne{0.8pt}{L3_2}{L4_4}
+\FlowZero{1.4pt}{L3_3}{L4_5} \FlowOne{1.4pt}{L3_3}{L4_6}
+\FlowZero{0.8pt}{L3_4}{L4_7} \FlowOne{0.8pt}{L3_4}{L4_8}
+\FlowZero{0.8pt}{L3_5}{L4_8} \FlowOne{0.8pt}{L3_5}{L4_9}
+\FlowZero{0.8pt}{L3_6}{L4_10} \FlowOne{0.8pt}{L3_6}{L4_11}
+\end{pgfonlayer}
+
+\node[note, anchor=north west] at (-1.2, -7.4) {%
+  \begin{tabular}{@{}c@{}}
+    $\varphi^2=\varphi+1$\\[1pt]
+    \texttt{011} $\leftrightarrow$ \texttt{100}
+  \end{tabular}%
+};
+
+\node[note, anchor=north west, text width=14.15cm] at (-1.2, -8.8) {%
+  \textbf{Semantic flow.} Each path corresponds to extending a binary string by one new trailing digit.\\
+  Nodes are grouped by exact value; highlighted nodes are semantic collisions.
+};
+
+\node[anchor=north west, font=\sffamily\scriptsize, text=PhiText, inner xsep=0pt] at (-1.2, -10.2) {%
+  \tikz{\draw[flowone,line width=1.2pt] (0,0)--(0.55,0);} extension $1$
+  \qquad
+  \tikz{\draw[flowzero,line width=1.2pt] (0,0)--(0.55,0);} extension $0$
+  \qquad
+  thicker bands indicate multiple syntactic strings following the same semantic transition
+};
+
+\end{tikzpicture}%
+\endgroup%
+
+\end{document}

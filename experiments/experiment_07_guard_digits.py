@@ -160,7 +160,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "results" / "experiment_07",
+        default=PROJECT_ROOT / "results" / "data" / "experiment_07",
     )
     args = parser.parse_args()
 
